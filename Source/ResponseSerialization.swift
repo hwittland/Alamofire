@@ -87,7 +87,11 @@ extension Request {
         -> Self
     {
         delegate.queue.addOperationWithBlock {
-            dispatch_async(queue ?? dispatch_get_main_queue()) {
+            if let queue = queue ?? self.manager.completionQueue {
+                dispatch_async(queue) {
+                    completionHandler(self.request, self.response, self.delegate.data, self.delegate.error)
+                }
+            } else {
                 completionHandler(self.request, self.response, self.delegate.data, self.delegate.error)
             }
         }
@@ -129,17 +133,24 @@ extension Request {
                 serializationCompletedTime: CFAbsoluteTimeGetCurrent()
             )
 
-            let response = Response<T.SerializedObject, T.ErrorObject>(
-                request: self.request,
-                response: self.response,
-                data: self.delegate.data,
+                    let response = Response<T.SerializedObject, T.ErrorObject>(
+                        request: self.request,
+                        response: self.response,
+                        data: self.delegate.data,
                 result: result,
                 timeline: timeline
-            )
+                    )
 
-            dispatch_async(queue ?? dispatch_get_main_queue()) { completionHandler(response) }
-        }
+            if let queue = queue ?? self.manager.completionQueue {
+                dispatch_async(queue) {
+                    completionHandler(response)
+                }
+            } else {
+                completionHandler(response)
+            }
 
+                }
+            
         return self
     }
 }
@@ -208,7 +219,7 @@ extension Request {
                 let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
-            
+
             var convertedEncoding = encoding
             
             if let encodingName = response?.textEncodingName where convertedEncoding == nil {
