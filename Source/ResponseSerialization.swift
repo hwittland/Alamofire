@@ -135,13 +135,13 @@ extension Request {
                 serializationCompletedTime: CFAbsoluteTimeGetCurrent()
             )
 
-                    let response = Response<T.SerializedObject, T.ErrorObject>(
-                        request: self.request,
-                        response: self.response,
-                        data: self.delegate.data,
+            let response = Response<T.SerializedObject, T.ErrorObject>(
+                request: self.request,
+                response: self.response,
+                data: self.delegate.data,
                 result: result,
                 timeline: timeline
-                    )
+            )
 
             if let queue = queue ?? self.manager.completionQueue {
                 dispatch_async(queue) {
@@ -150,9 +150,9 @@ extension Request {
             } else {
                 completionHandler(response)
             }
-
-                }
             
+        }
+        
         return self
     }
 }
