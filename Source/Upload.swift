@@ -52,7 +52,7 @@ extension Manager {
             HTTPBodyStream = stream
         }
 
-        let request = Request(session: session, task: uploadTask)
+        let request = Request(manager: self, task: uploadTask)
 
         if HTTPBodyStream != nil {
             request.delegate.taskNeedNewBodyStream = { _, _ in
