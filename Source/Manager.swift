@@ -203,29 +203,6 @@ public class Manager {
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
 
-    /**
-     Initializes the `Manager` instance with the specified session and server trust policy.
-     
-     - parameter session:                  The URL session.
-     - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust
-     challenges. `nil` by default.
-     
-     - returns: The new `Manager` instance if the URL session's delegate matches the delegate parameter.
-     */
-    public init(
-        session: NSURLSession,
-        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
-    {
-        guard let delegate = session.delegate as? SessionDelegate else {
-            fatalError("'session' needs an delegate of type 'Manager.SessionDelegate'.")
-        }
-        
-        self.delegate = delegate
-        self.session = session
-        
-        commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
-    }
-
     private func commonInit(serverTrustPolicyManager serverTrustPolicyManager: ServerTrustPolicyManager?) {
         session.serverTrustPolicyManager = serverTrustPolicyManager
 
