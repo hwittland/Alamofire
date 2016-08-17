@@ -363,6 +363,11 @@ public class Request {
                 }
 
                 queue.isSuspended = false
+                
+                if session.delegateQueue.maxConcurrentOperationCount == 1 {
+                    queue.waitUntilAllOperationsAreFinished()
+                }
+                
             }
         }
     }

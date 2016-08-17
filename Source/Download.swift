@@ -28,6 +28,7 @@ extension Manager {
     private enum Downloadable {
         case request(Foundation.URLRequest)
         case resumeData(Data)
+        case downloadTask(URLSessionDownloadTask)
     }
 
     private func download(_ downloadable: Downloadable, destination: Request.DownloadFileDestination) -> Request {
@@ -42,6 +43,8 @@ extension Manager {
             queue.sync {
                 downloadTask = self.session.downloadTask(withResumeData: resumeData)
             }
+        case .downloadTask(let task):
+            downloadTask = task
         }
 
         let request = Request(session: session, task: downloadTask)
@@ -124,6 +127,21 @@ extension Manager {
     public func download(_ resumeData: Data, destination: Request.DownloadFileDestination) -> Request {
         return download(.resumeData(resumeData), destination: destination)
     }
+
+    // MARK: downloadTask
+    
+    /**
+     Creates a request for downloading the specified downloadTask.
+     
+     - parameter downloadTask:  An URLSessionDownloadTask belonging to the actual URLSession.
+     - parameter destination: The closure used to determine the destination of the downloaded file.
+     
+     - returns: The created download request.
+     */
+    public func download(downloadTask: URLSessionDownloadTask, destination: Request.DownloadFileDestination) -> Request {
+        return download(.downloadTask(downloadTask), destination: destination)
+    }
+    
 }
 
 // MARK: -

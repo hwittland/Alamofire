@@ -251,7 +251,7 @@ public class Manager {
                 return subdelegate
             }
             set {
-                subdelegateQueue.async { self.subdelegates[task.taskIdentifier] = newValue }
+                subdelegateQueue.async(flags: .barrier) { self.subdelegates[task.taskIdentifier] = newValue }
             }
         }
 
@@ -503,6 +503,7 @@ public class Manager {
             - parameter error:   If an error occurred, an error object indicating how the transfer failed, otherwise nil.
         */
         public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            NSLog("Start of \(#function)")
             if let taskDidComplete = taskDidComplete {
                 taskDidComplete(session, task, error)
             } else if let delegate = self[task] {
@@ -676,6 +677,7 @@ public class Manager {
             downloadTask: URLSessionDownloadTask,
             didFinishDownloadingTo location: URL)
         {
+            NSLog("Start of \(#function)")
             if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
                 downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
             } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {

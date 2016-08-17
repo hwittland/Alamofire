@@ -29,6 +29,7 @@ extension Manager {
         case data(Foundation.URLRequest, Foundation.Data)
         case file(Foundation.URLRequest, URL)
         case stream(Foundation.URLRequest, InputStream)
+        case uploadTask(URLSessionUploadTask)
     }
 
     private func upload(_ uploadable: Uploadable) -> Request {
@@ -50,6 +51,9 @@ extension Manager {
             }
 
             HTTPBodyStream = stream
+            
+        case .uploadTask(let task):
+            uploadTask = task
         }
 
         let request = Request(session: session, task: uploadTask)
@@ -186,6 +190,20 @@ extension Manager {
         let mutableURLRequest = URLRequest(method, urlString, headers: headers)
 
         return upload(urlRequest: mutableURLRequest, stream: stream)
+    }
+
+    // MARK: uploadTask
+    
+    /**
+     Creates a request for uploading the specified uploadTask.
+     
+     - parameter uploadTask: Existing uploadTask belonging to the URLSession.
+     - returns: The created upload request.
+     
+     */
+    public func upload(uploadTask: URLSessionUploadTask) -> Request
+    {
+        return upload(.uploadTask(uploadTask))
     }
 
     // MARK: MultipartFormData
